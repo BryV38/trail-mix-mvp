@@ -24,6 +24,8 @@ class MainContainer extends Component {
                 trailData={this.props.trailData}
                 getTrail={this.props.getTrail}
                 displayTrail={this.props.displayTrail} 
+                lat={this.props.lat}
+                long={this.props.long}
                 /><br />
                 <ListContainer 
                 trailData={this.props.trailData} 

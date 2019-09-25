@@ -15,9 +15,10 @@ app.get('/homepage', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
 });
 
-//fetches trail data from REI API
+//FETCHES TRAIL DATA FROM REI API => REF. APP.JSX @ componentDidMount
 app.get('/data', trailController.getTrails, (req, res) => {
-  res.status(200).send(res.locals.trails);
+  const { trails } = res.locals;
+  return res.status(200).send(res.locals.trails);
 })
 
 //routes post request upon login to verify user

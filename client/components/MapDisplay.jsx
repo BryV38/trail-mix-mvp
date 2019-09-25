@@ -16,11 +16,11 @@ import SvgTrekking from "./Icons/Trekking.js";
 //importing ReactMapGl component from react-map-gl module, using react hooks to set local state 
 const MapDisplay = props => {
     const [viewport, setViewport] = useState({
-       latitude: 34.1053,
-       longitude: -118.352,
-       width: '70vw',
-       height: '70vh',
-       zoom: 11
+      latitude: 34.1053, // 34.1053
+      longitude: -118.352, //-118.352
+      width: '70vw',
+      height: '70vh',
+      zoom: 3 //11 originally
     });
     
     const [selectedHike, setSelectedHike] = useState(null);
