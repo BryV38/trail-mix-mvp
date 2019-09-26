@@ -37,6 +37,7 @@ module.exports = {
         '/trail': 'http://localhost:3000',
         '/trail/add': 'http://localhost:3000',
         '/trail/remove': 'http://localhost:3000',
+        '/weather': `http://localhost:3000`,
       }
     },
     resolve: {

@@ -5,6 +5,11 @@ const googleMapsUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address
 const googleMaps_API_KEY = 'AIzaSyAgJUQeWjM55IdJbPXVRa3i-5N6uLvptI8';
 
 const hikingProject_API_KEY = '200601261-d71b1d3a8f073c58c93d34bf907171f1'
+const weather_API = '5a7844ec3fff2f570b9449fb1c26d66a';
+const darkSky_API_KEY = '0b5c5fab0ec2f6d0ad4dd955eea69e1c';
+// import Skycons from 'react-skycons'
+const Skycons = require("skycons")(window);
+
 
 //state includes data retrieved from REI API, selects selected trail
 // holds trail specific comments pulled from database
@@ -24,6 +29,7 @@ class App extends Component {
             latitude: 39.0119,
             longitude: -98.4842,
             zoom: 3,
+            weatherData: [],
         }
 
     
@@ -33,6 +39,7 @@ class App extends Component {
     this.displayTrail = this.displayTrail.bind(this);
     this.handleSearchInput = this.handleSearchInput.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+    this.ref = React.createRef();
 
     };
     //fetches data from REI API and sets to state when the page loads
@@ -59,12 +66,12 @@ class App extends Component {
             console.log('longitude is: ', lng)
         }) 
         .then((res) => {    
-            const hUrl = `https://www.hikingproject.com/data/get-trails?lat=${this.state.latitude}&lon=${this.state.longitude}&maxDistance=20&maxResults=100$minStars=3&key=${hikingProject_API_KEY}`
+            const hUrl = `https://www.hikingproject.com/data/get-trails?lat=${this.state.latitude}&lon=${this.state.longitude}&maxDistance=20&maxResults=20$minStars=2&key=${hikingProject_API_KEY}`
             console.log('hUrl is: ', hUrl);
             fetch(hUrl)
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
+                console.log(`array of trails: `+ res);
                 // this.setState({ trailData: res.trails })
                 this.setState(state => {
                     return {
@@ -75,6 +82,19 @@ class App extends Component {
                 console.log('this.state.trailData is: ', this.state.trailData)
                 })
         })
+        .then((res) => {
+            const wUrl = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${darkSky_API_KEY}/${this.state.latitude},${this.state.longitude}`;
+            console.log(`wUrl: ${wUrl}`)
+            fetch(wUrl)
+                .then((res) => res.json())
+                .then((res) => {
+                    this.setState({ weatherData: res.daily });
+                    console.log(`Weather array info: ${this.state.weatherData.data[0].temperatureMin}`)
+                })
+        })
+
+  
+
         this.setState({zoom: 10})
     }
 
@@ -100,6 +120,16 @@ class App extends Component {
                   };
               });
         });
+
+        // const skycons = new Skycons({ color: "gray" });
+        // console.log(this.state.weatherData.data[0].icon)
+        // let a = this.state.weatherData.data[0].icon;
+        // console.log(`state: ${a}`)
+        // skycons.add(this.ref.current, Skycons.a);
+        // skycons.play();
+        const skycons = new Skycons({ color: "pink" });
+        skycons.add(this.ref.current, Skycons.PARTLY_CLOUDY_DAY);
+        skycons.play();
     };
 
     //invoked by on-click function in TrailDisplay, sets selected trail in state
@@ -181,8 +211,15 @@ class App extends Component {
     //renders MainContainer and conditionally renders TrailContainer
     render() {
         if (!this.state.isLoggedIn) return <Redirect to="/login" />
+        console.log(`Weather Data Array: ${this.state.weatherData}`)
+
+        let weather = 70;
+        if (this.state.weatherData.length !== 0) {
+            weather = <canvas ref={this.ref} width="128" height="128" />
+        }
         return (
             <div className='appContainer'>
+                {/* <p>Weather info: {this.state.weatherData.hourly.summary}</p> */}
             <form onSubmit={this.handleSearchSubmit}>
             <label>
             Search Address:
@@ -190,6 +227,7 @@ class App extends Component {
             </label>
             <input type="submit" value="Submit" />
             </form>
+                {weather}
                 <MainContainer 
                 className='mainContainer' 
                 latitude={this.state.latitude}

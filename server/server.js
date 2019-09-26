@@ -20,7 +20,11 @@ app.get('/homepage', (req, res) => {
 // fetches trail data from REI API
 app.get('/data', trailController.getTrails, (req, res) => {
   res.status(200).send(res.locals.trails);
-})
+});
+
+// app.get('/weather', trailController.getWeather, (req, res) => {
+//   res.status(200).send(res.locals.weather);
+// })
 
 // fetches hikers associated with a trail
 app.post('/hikers', trailController.getHikers, trailController.getHikersInfo, (req, res) => {
