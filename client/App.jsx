@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MainContainer from "./containers/MainContainer.jsx";
 import { BrowserRouter as Router, Route, Switch, Link, Redirect} from "react-router-dom";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import ReactAnimatedWeather from 'react-animated-weather';
 
 const googleMapsUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 const googleMaps_API_KEY = 'AIzaSyAgJUQeWjM55IdJbPXVRa3i-5N6uLvptI8';
@@ -28,6 +29,10 @@ class App extends Component {
             weatherData: [],
             dropdownOpen: false,
             isLoggedIn: true,
+          icon: 'CLEAR_DAY',
+          color: 'black',
+          size: 25,
+          animate: true
         }
 
       this.getTrail = this.getTrail.bind(this);
@@ -87,8 +92,19 @@ class App extends Component {
             fetch(wUrl)
                 .then((res) => res.json())
                 .then((res) => {
-                    this.setState({ weatherData: res.daily });
-                    console.log(`Weather array info: ${this.state.weatherData.data[0].temperatureMin}`)
+                  let icon = res.daily.data[0].icon;
+                  let iconArray = icon.split('');
+                  let newIconStr = iconArray.reduce((str, char) => {
+                    if (char === '-') {
+                      str += '_';
+                      return str;
+                    }
+                    str += char;
+                    return str;
+                  }, '')
+                  let upperIcon = newIconStr.toUpperCase()
+                  this.setState({ weatherData: res.daily, icon: upperIcon });
+                  console.log(`Weather array info: ${this.state.icon}`)
                 })
         })
         this.setState({zoom: 10})
@@ -250,6 +266,7 @@ class App extends Component {
           <div>
             <div className="navbars">
               <div className="navigation">
+  
                 <Link className="nav-item" to="/homepage"><img src="../assets/MARKER.png" width="50"></img></Link>
                 <Link className="nav-item my-favs" to={{
                   pathname: '/favs',
@@ -271,6 +288,12 @@ class App extends Component {
                 </Dropdown>
               </div>
               <div className="current-weather">Current weather {weather}&#8457;</div>
+              <ReactAnimatedWeather
+                  icon={this.state.icon}
+                  color={this.state.color}
+                  size={this.state.size}
+                  animate={this.state.animate}
+              />
             </div>
 
             <div className="search-text">Find Your Trail</div>

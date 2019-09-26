@@ -12,6 +12,7 @@
 import React, { useState, useEffect } from "react";
 import ReactMapGl, { Marker, Popup } from 'react-map-gl';
 import SvgTrekking from "./Icons/Trekking.js";
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 
 function getNumber(word) {
@@ -31,7 +32,7 @@ const MapDisplay = props => {
        longitude: props.longitude,
        width: '40vw',
        height: '80vh',
-       zoom: props.zoom
+       zoom: props.zoom,
     });
 
     useEffect(() => {
@@ -55,36 +56,31 @@ const MapDisplay = props => {
                 latitude={trail.latitude}
                 longitude={trail.longitude}
                 >
-                    <div
-                    onClick={e => {
+                    <button className="marker-btn" onClick={(e) => {
                         e.preventDefault();
                         setSelectedHike(trail);
-                        setViewport({
-                            latitude: trail.latitude,
-                            longitude: trail.longitude,
-                            width: '40vw',
-                            height: '80vh',
-                            zoom: 16
-                        });
-                    }}
-                    >
-                    <img src="./../../../assets/MARKER.png" height="30" width="30"></img>
-                    </div>
+                    }}>
+                        <img src="./../../../assets/MARKER.png" height="30" width="30"></img>
+                    </button>
                 </Marker>
             ))}
-            {selectedHike && (
+            {selectedHike ? (
                 <Popup
-                latitude={selectedHike.latitude}
-                longitude={selectedHike.longitude}
-                className='popup'
+                    latitude={selectedHike.latitude}
+                    longitude={selectedHike.longitude}
+                    onClose={() => {
+                        setSelectedHike(null)
+                    }}
                 >
-                    <div onClick={() => props.displayTrail(selectedHike)}>
-                        <h4 className='popup-name'>{selectedHike.name}</h4>
+                    <div>
+
+                        {/* <button className="popup-name" key={trail.id} >{selectedHike.name}</button> */}
+                        <h4 className='popup-name' key={selectedHike.id}>{selectedHike.name}</h4>
                         <p className='popup-summary'>{selectedHike.location}</p>
-                        <p className='popup-difficulty'>Level {getNumber( selectedHike.difficulty)}</p>
+                        <p className='popup-difficulty'>Level {getNumber(selectedHike.difficulty)}</p>
                     </div>
                 </Popup>
-            )}
+            ) : null}
             </ReactMapGl>
         </div>
     );
